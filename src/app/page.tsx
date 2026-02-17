@@ -10,9 +10,9 @@ const LatoS=Lato({
 })
 export default function Home() {
   return (
-   <div className={styles.container}>
-     
-      <Image src="/logo.png" alt="logo" width={200} height={200}></Image>
+   <div className={styles.container}>     
+
+      <Image src="/logo.png" loading="eager" alt="logo" width={200} height={200}></Image>
        <div className={`${LatoS.className} ${styles.title}`}>
   <h1>Grazi</h1>
 </div>
