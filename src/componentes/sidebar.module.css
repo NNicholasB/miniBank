@@ -1,0 +1,31 @@
+
+.container{
+    display: flex;
+  flex-direction: column;
+width: 150px;
+  margin-top: 250px;
+position: absolute;
+    
+}
+.nav{
+    padding: 0.5rem;
+    margin-left: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    font-size: 18px;
+    
+}
+.nav a {
+    
+    text-decoration: none;
+    color: white;
+}
+.item{
+    padding: 0.3rem;
+    border-radius: 10px;
+    border: 1px solid #EFBF04;
+}
+.item:hover{
+    border: 2px solid #EFBF04;
+}

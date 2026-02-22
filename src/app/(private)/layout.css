@@ -1,0 +1,11 @@
+body{
+  background-color: #003366;
+}
+.conteudo {
+  margin-left: 250px;
+  padding: 30px;
+  min-height: 100vh;
+  background-color: #27619c;
+  flex: 1;
+  color:white;
+}

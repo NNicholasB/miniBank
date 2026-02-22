@@ -17,5 +17,5 @@ try {
 }
 }
 export const config={
-    matcher:["/inicio"]
+    matcher:["/inicio","/dashboard","/emprestimos","/pagamentos"]
 }

@@ -22,6 +22,7 @@ export default function Page() {
     console.log(res.headers.get("content-type"));
     if (res.ok) {
       router.push("/inicio");
+      
     } else {
       const data = await res.json();
       alert(data.error);

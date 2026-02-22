@@ -43,7 +43,7 @@ export async function POST(req: NextRequest) {
       sameSite: "strict",
       maxAge: 60 * 60
     })
-
+localStorage.setItem("user", JSON.stringify(user))
     return response
 
   } catch (error) {
