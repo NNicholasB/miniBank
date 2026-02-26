@@ -20,13 +20,22 @@ export default function Page() {
     const res = await handleLogin(email, senha);
     console.log(res.status);
     console.log(res.headers.get("content-type"));
-    if (res.ok) {
-      router.push("/inicio");
-      
-    } else {
-      const data = await res.json();
-      alert(data.error);
-    }
+     
+   if (!res.ok) {
+  const errorData = await res.json();
+  alert(errorData.error || "Erro no login");
+  return;
+}
+
+const data = await res.json();
+
+if (!data?.user) {
+  alert("Usuário inválido");
+  return;
+}
+
+localStorage.setItem("user", JSON.stringify(data.user));
+router.push("/inicio");
   }
   async function onCadastro(e: any) {
     e.preventDefault();
@@ -37,6 +46,8 @@ export default function Page() {
       alert("error");
     }
   }
+  
+
   return (
     <div className={styles.container}>
       <div

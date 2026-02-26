@@ -36,14 +36,15 @@ export async function POST(req: NextRequest) {
       { expiresIn: "1h" }
     )
 
-    const response = NextResponse.json({ message: "Login realizado" })
+    const response = NextResponse.json({
+      user:{nome:user.nome}
+    })
 
     response.cookies.set("token", token, {
       httpOnly: true,
       sameSite: "strict",
       maxAge: 60 * 60
     })
-localStorage.setItem("user", JSON.stringify(user))
     return response
 
   } catch (error) {

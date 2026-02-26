@@ -1,15 +1,19 @@
+import { cookies } from "next/headers"
 import jwt from "jsonwebtoken"
 
-export function getUserId(){
-    const token=localStorage.getItem("token")
-    if(!token)return null
+export async function getUserId(){
+    const token = (await cookies()).get("token")?.value
+
+    if(!token) return null
+
     try {
-        const decoded=jwt.verify(
+        const decoded = jwt.verify(
             token,
             process.env.JWT_SECRET!
-        ) as {id:number}
+        ) as { id: number }
+
         return decoded.id
-    } catch (error) {
+    } catch {
         return null
     }
 }

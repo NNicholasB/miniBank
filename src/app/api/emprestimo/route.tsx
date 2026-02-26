@@ -4,16 +4,16 @@ import { getUserId } from "@/lib/auth";
 import { NextRequest, NextResponse } from "next/server";
 export async function POST(req:NextRequest){
     try {
-        const userId=getUserId()
-        const {valor,parcelas,taxaJuros}= await req.json()
+        const userId= await getUserId()
+        const {nome,valor,parcelas,taxaJuros}= await req.json()
         const valorRestante= valor
-        const resul= await pool.query(   `
+        const resul= await pool.query(`
       INSERT INTO emprestimos
-      (usuario_id, valor, taxa_juros, parcelas, valor_restante, status)
-      VALUES ($1, $2, $3, $4, $5, 'ativo')
+      (nome, usuario_id, valor, taxa_juros, parcelas, valor_restante, status, data_criado)
+      VALUES ($1, $2, $3, $4, $5, $6, 'ativo', NOW())
       RETURNING *
       `,
-      [userId, valor, taxaJuros, parcelas, valorRestante] 
+      [nome, userId, valor, taxaJuros, parcelas, valorRestante] 
     )
         if(!resul){
             return NextResponse.json(
@@ -21,7 +21,7 @@ export async function POST(req:NextRequest){
                 {status:404}
             )
         }
-        return resul
+        return NextResponse.json(resul.rows[0])
     } catch (error) {
         console.log("erro no emprestimo",error)
         return NextResponse.json(
@@ -32,7 +32,7 @@ export async function POST(req:NextRequest){
 }
 export async function GET(){
     try {
-        const userId=getUserId()
+        const userId= await getUserId()
         if(!userId){
             return NextResponse.json(
                 {error:"Nao autorizado"},
@@ -44,9 +44,10 @@ export async function GET(){
 return NextResponse.json(result.rows)
 
     } catch (error) {
-        return NextResponse.json(
-            {error:"Erro interno"},
-            {status:500}
-        )
+           console.log("ERRO REAL DO GET:", error)
+    return NextResponse.json(
+        {error:"Erro interno"},
+        {status:500}
+    )
     }
 }
