@@ -5,15 +5,15 @@ import { NextRequest, NextResponse } from "next/server";
 export async function POST(req:NextRequest){
     try {
         const userId= await getUserId()
-        const {nome,valor,parcelas,taxaJuros}= await req.json()
-        const valorRestante= valor
+        const {nome,valor,parcelas,taxa_juros,valor_parcelas,valor_total}= await req.json()
+        const valorRestante= valor_total
         const resul= await pool.query(`
       INSERT INTO emprestimos
-      (nome, usuario_id, valor, taxa_juros, parcelas, valor_restante, status, data_criado)
-      VALUES ($1, $2, $3, $4, $5, $6, 'ativo', NOW())
+      (nome, usuario_id, valor, taxa_juros, parcelas, valor_restante, status, data_criado, valor_parcelas,valor_total)
+      VALUES ($1, $2, $3, $4, $5, $6, 'ativo', NOW(),$7,$8)
       RETURNING *
       `,
-      [nome, userId, valor, taxaJuros, parcelas, valorRestante] 
+      [nome, userId, valor, taxa_juros, parcelas, valorRestante,valor_parcelas,valor_total] 
     )
         if(!resul){
             return NextResponse.json(

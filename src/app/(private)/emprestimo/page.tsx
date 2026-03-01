@@ -1,5 +1,8 @@
 'use client'
 import { useEffect, useState } from "react"
+import { calculos } from "../../../../utils/calculos"
+import { handleEmprestimo } from "@/handles/handleEmprestimo"
+
 
 
 interface Emprestimo{
@@ -7,6 +10,7 @@ interface Emprestimo{
     nome:string,
     valor:number,
     valor_restante:number,
+    valor_parcelas:number,
     status:string,
     taxa_juros:number,
     parcelas:number,
@@ -19,16 +23,19 @@ export default function Page(){
   { nome: "Empresarial", taxa: 1.2 }
 ]
     const [emprestimos,setEmprestimos]=useState<Emprestimo[]>([])
-    const [nome,setNome]=useState("")
-    const[valor,setValor]=useState("")
-    const[parcelas,setParcelas]=useState("")
-    const[status,setStatus]=useState("")
-    const[valorRestante,setValorRestante]=useState("")
-    const [taxaJuros,setTaxaJuros]=useState("2.5")
-    const [loading,setLoading]=useState(true)
+   const [emprestimoNovo, setEmprestimoNovo] = useState({
+  nome: "",
+  valor: "",
+  parcelas: "",
+  valor_parcelas:"",
+  valor_restante:"",
+  taxa_juros: "",
+  valor_total:"",
+  plano: ""
+})
+    const [loading,setLoading]=useState(true)  
     const [mostrarForm,setMostrarForm]=useState(false)
-    const[planoSelecionado,setPlanoSelecionado]=useState("")
-
+  
     async function carregarEmprestimos(){
         const res= await fetch("api/emprestimo")
         const data= await res.json()
@@ -42,7 +49,45 @@ export default function Page(){
         carregarEmprestimos()
     },[])
   
-    return(
+const valorNumero = Number(emprestimoNovo.valor)
+const taxaNumero = Number(emprestimoNovo.taxa_juros)
+const parcelasNumero = Number(emprestimoNovo.parcelas)
+
+const { valorTotal, valorParcelas } = calculos(
+  valorNumero,
+  taxaNumero,
+  parcelasNumero
+)
+async function solicitarEmprestimo() {
+const novoEmprestimo={
+  nome:emprestimoNovo.nome,
+  valor:valorNumero,
+  parcelas:parcelasNumero,
+  taxa_juros:taxaNumero,
+  status:"ativo",
+  valor_parcelas:valorParcelas,
+  valor_total:valorTotal,
+  valor_restante:valorTotal,
+  data_criado:new Date().toISOString()}
+  const res= await handleEmprestimo(novoEmprestimo)
+  if(res.ok){
+    await carregarEmprestimos()
+    setMostrarForm(false)
+    setEmprestimoNovo({
+      nome: "",
+      valor: "",
+      parcelas: "",
+      taxa_juros: "",
+      plano: "",
+      valor_parcelas: "",
+      valor_restante: "",
+      valor_total: ""
+    })
+  }else{
+    console.log("erro ao criar emprestimo")
+  }
+  
+ } return(
         <div>
         <div>
 <h1>emprestimo</h1>
@@ -66,6 +111,12 @@ export default function Page(){
     currency: "BRL"
   })}
 </p>
+<p>Valor Parcelas:{Number(e.valor_parcelas).toLocaleString("pt-BR",{
+  style:"currency",
+  currency:"BRL"
+}
+  
+)}</p>
                 <p>Status:{e.status}</p>
                 <p>Data da Solicitacao:{new Date(e.data_criado).toLocaleDateString("pt-BR")}</p>
             </div>
@@ -80,20 +131,27 @@ export default function Page(){
        </div>
        <div>
         {mostrarForm && (
-  <form>
+  <form onSubmit={(e)=>{
+    e.preventDefault()
+    solicitarEmprestimo()
+  }}>
     <div>
         <label>Nome</label>
-        <input type="text" value={nome} onChange={(e)=>setNome(e.target.value)} />
+        <input type="text" value={emprestimoNovo.nome} onChange={(e)=>setEmprestimoNovo({
+          ...emprestimoNovo,nome:e.target.value
+        })} />
 <select
-  value={planoSelecionado}
+  value={emprestimoNovo.plano}
   onChange={(e) => {
-    const nomePlano = e.target.value
-    setPlanoSelecionado(nomePlano)
+    const planoSelecionado = planos.find(
+      (p) => p.nome === e.target.value
+    )
 
-    const plano = planos.find(p => p.nome === nomePlano)
-    if (plano) {
-      setTaxaJuros(plano.taxa.toString())
-    }
+    setEmprestimoNovo({
+      ...emprestimoNovo,
+      plano: e.target.value,
+      taxa_juros: planoSelecionado?.taxa.toString() || ""
+    })
   }}
 >
   <option value="">Selecione um plano</option>
@@ -102,11 +160,27 @@ export default function Page(){
       {plano.nome} - {plano.taxa}% a.m
     </option>
   ))}
-</select>  </div>
+</select>
+<label>Valor</label>
+<input type="number" value={emprestimoNovo.valor} onChange={(e)=>setEmprestimoNovo({...emprestimoNovo,valor:e.target.value})} />
+<label>Parcelas</label>
+<input type="number" value={emprestimoNovo.parcelas} onChange={(e)=>setEmprestimoNovo({...emprestimoNovo,parcelas:e.target.value})} />
+<label>Valor Total:{valorTotal.toLocaleString("pt-BR",{
+  style:"currency",
+  currency:"BRL"
+})}</label>
+<label>Valor Parcelas: {valorParcelas.toLocaleString("pt-BR",{
+  style:"currency",
+  currency:"BRL"
+})}</label>
+
+<p></p>
+<button>Solicitar</button>
+ </div>
+
   </form>
 )}
-<label>Valor</label>
-<input type="number" value={valor} onChange={(e)=>setValor(e.target.value)} />
+
        </div>
         </div>
 
