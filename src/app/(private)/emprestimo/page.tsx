@@ -3,6 +3,7 @@ import { useEffect, useState } from "react"
 import { calculos } from "../../../../utils/calculos"
 import { handleEmprestimo } from "@/handles/handleEmprestimo"
 
+import Styles from "./emprestimo.module.css"
 
 
 interface Emprestimo{
@@ -89,10 +90,10 @@ const novoEmprestimo={
   
  } return(
         <div>
-        <div>
-<h1>emprestimo</h1>
+        <div className={Styles.title}>
+<h1>empréstimo</h1>
         </div>
-        <div>
+        <div className={Styles.card}>
             {loading && <p>Carregando . . .</p>}
             {emprestimos.map((e)=>
             ( <div key={e.id}>
@@ -127,7 +128,7 @@ const novoEmprestimo={
 
 
        <div>
-        <button onClick={()=>setMostrarForm(!mostrarForm)}>{mostrarForm ? "Fechar" :"Novo Emprestimo"} </button>
+        <button className={Styles.btn} onClick={()=>setMostrarForm(!mostrarForm)}>{mostrarForm ? "Fechar" :"Novo Emprestimo"} </button>
        </div>
        <div>
         {mostrarForm && (
@@ -175,7 +176,7 @@ const novoEmprestimo={
 })}</label>
 
 <p></p>
-<button>Solicitar</button>
+<button className={Styles.btn}>Solicitar</button>
  </div>
 
   </form>
