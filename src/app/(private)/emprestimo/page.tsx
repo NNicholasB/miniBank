@@ -23,6 +23,8 @@ export default function Page(){
   { nome: "Premium", taxa: 1.8 },
   { nome: "Empresarial", taxa: 1.2 }
 ]
+const [mostrarPopup,setMostrarPopup]=useState(false)
+const [mostrarPopupError,setMostrarPopupError]=useState(false)
     const [emprestimos,setEmprestimos]=useState<Emprestimo[]>([])
    const [emprestimoNovo, setEmprestimoNovo] = useState({
   nome: "",
@@ -74,6 +76,7 @@ const novoEmprestimo={
   if(res.ok){
     await carregarEmprestimos()
     setMostrarForm(false)
+    setMostrarPopup(true)
     setEmprestimoNovo({
       nome: "",
       valor: "",
@@ -85,6 +88,7 @@ const novoEmprestimo={
       valor_total: ""
     })
   }else{
+    setMostrarPopupError(true)
     console.log("erro ao criar emprestimo")
   }
   
@@ -183,6 +187,21 @@ const novoEmprestimo={
 )}
 
        </div>
+        {mostrarPopup && (
+        <div className={Styles.popup}>
+          <p>Empréstimo criado com sucesso!</p>
+          <button onClick={() => setMostrarPopup(false)}>Fechar</button>
+        </div>
+      )}
+       {mostrarPopupError && (
+        <div className={Styles.fundo}>
+ <div className={Styles.popupError}>
+          <p>Limite Maximo de Emprestimo atingido</p>
+          <button onClick={() => setMostrarPopupError(false)}>Fechar</button>
+        </div>
+        </div>
+       
+      )}
         </div>
 
         
