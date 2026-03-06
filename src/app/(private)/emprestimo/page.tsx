@@ -42,7 +42,7 @@ const [mostrarPopupError,setMostrarPopupError]=useState(false)
     async function carregarEmprestimos(){
         const res= await fetch("api/emprestimo")
         const data= await res.json()
-        console.log(data,res.status)
+        
         setEmprestimos(data)
         setLoading(false)
        
