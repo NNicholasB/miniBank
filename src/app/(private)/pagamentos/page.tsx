@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from "react"
-
+import Styles from "./pagamentos.module.css"
 interface Emprestimo{
     id:number,
     nome:string,
@@ -32,6 +32,15 @@ export default function Page(){
     useEffect(()=>{
         carregarEmprest()
     },[])
+
+    function pagarParcela(){
+        if(!selecionado) return
+        setSelecionado({
+            ...selecionado, valor_restante:Number(selecionado.valor_restante) - Number(selecionado.valor_parcelas)
+        })
+        
+
+    }
     return(
         <div>
             <div>
@@ -63,7 +72,10 @@ export default function Page(){
     ))}
 </div>
  {selecionado &&(
-    <div>
+    <div className={Styles.fundo}>
+        <div className={Styles.popUpEmprestimo}>  
+              <button onClick={()=>setSelecionado(null)} className={Styles.x}>X</button>
+
             <div>{selecionado.nome}</div>
             <p>Valor Restante:{Number(selecionado.valor_restante).toLocaleString("pt-BR",{
                 style:"currency",
@@ -75,8 +87,10 @@ export default function Page(){
               })}</p>
               <p>Quantidade de Parcelas Restante:{selecionado.parcelas}</p>
             
-            <button>Pagar Parcela</button><button>Pagar Total</button>
+            <button className={Styles.btnDefault}>Pagar Parcela</button><button className={Styles.btnDefault}>Pagar Total</button>
             </div>
+    </div>
+    
         )}
         </div>
        

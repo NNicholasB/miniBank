@@ -2,6 +2,7 @@ import { pool } from "@/database/database";
 import { getUserId } from "@/lib/auth";
 
 import { NextRequest, NextResponse } from "next/server";
+import { calculos } from "../../../../utils/calculos";
 export async function POST(req:NextRequest){
     try {
         const userId= await getUserId()
@@ -11,8 +12,9 @@ export async function POST(req:NextRequest){
                 {error:"Nao autorizado"},
                 {status:401}
             )}
-        const {nome,valor,parcelas,taxa_juros,valor_parcelas,valor_total}= await req.json()
-       const valorRestante= valor_total
+        const {nome,valor,parcelas,taxa_juros}= await req.json()
+        const { valorTotal,valorParcelas}=calculos(valor,taxa_juros,parcelas)
+       const valorRestante= valorTotal
             const limite=3
         
     const result= await pool.query("SELECT COUNT(*) FROM emprestimos WHERE usuario_id=$1 AND status='ativo'",[userId])
@@ -26,7 +28,7 @@ export async function POST(req:NextRequest){
       VALUES ($1, $2, $3, $4, $5, $6, 'ativo', NOW(),$7,$8)
       RETURNING *
       `,
-      [nome, userId, valor, taxa_juros, parcelas, valorRestante,valor_parcelas,valor_total] 
+      [nome, userId, valor, taxa_juros, parcelas, valorRestante,valorParcelas,valorTotal] 
     )
     return NextResponse.json(resul.rows[0])
       
