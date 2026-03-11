@@ -4,7 +4,9 @@ import { getUserId } from "@/lib/auth";
 import { NextRequest, NextResponse } from "next/server";
 import { calculos } from "../../../../utils/calculos";
 export async function POST(req:NextRequest){
+    const c=await pool.connect()
     try {
+        await c.query("BEGIN")
         const userId= await getUserId()
          
          if(!userId){
@@ -17,13 +19,13 @@ export async function POST(req:NextRequest){
        const valorRestante= valorTotal
             const limite=3
         
-    const result= await pool.query("SELECT COUNT(*) FROM emprestimos WHERE usuario_id=$1 AND status='ativo'",[userId])
+    const result= await c.query("SELECT COUNT(*) FROM emprestimos WHERE usuario_id=$1 AND status='ativo'",[userId])
         const quantidade= Number(result.rows[0].count)
         if(quantidade>=limite){
             return NextResponse.json({error:"Limite de 3 emprestimos ativos"},{status:400})
         }
         
-        const resul= await pool.query(`
+        const resul= await c.query(`
       INSERT INTO emprestimos
       (nome, usuario_id, valor, taxa_juros, parcelas, valor_restante, status, data_criado, valor_parcelas,valor_total)
       VALUES ($1, $2, $3, $4, $5, $6, 'ativo', NOW(),$7,$8)
@@ -31,15 +33,21 @@ export async function POST(req:NextRequest){
       `,
       [nome, userId, valor, taxa_juros, parcelas, valorRestante,valorParcelas,valorTotal] 
     )
+    await c.query(`UPDATE users SET saldo= saldo + $1 WHERE id=$2`,[valor,userId])
+
+     await c.query("COMMIT")
     return NextResponse.json(resul.rows[0])
       
     } catch (error) {
+        await c.query("ROLLBACK")
         console.log("erro no emprestimo",error)
         return NextResponse.json(
             {error:"Erro no Emprestimo"},
             {status:500}
         )
-    }
+    }finally {
+    c.release()
+  }
 }
 export async function GET(){
     try {

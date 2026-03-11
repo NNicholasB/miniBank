@@ -57,18 +57,28 @@ display: flex;
 }
 .back div{
       padding: 15px;
-  border: 1px solid #EFBF04; 
+font-weight: 550;
   border-radius: 8px;
-  background-color: #003366;
+  background-color: #96b9da;
   box-shadow: 0 8px 12px rgba(0, 0, 0, 0.4);
-   transition: transform 0.2s, box-shadow 0.2s
+   transition: transform 0.2s, box-shadow 0.2s;
+   color: black;
 }
 .back > div:hover {
   transform: translateY(-1px); 
-  box-shadow: 0 8px 12px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 8px 12px rgba(0, 0, 0, 0.5); 
+  cursor: pointer;
 }
 .back p{
     text-transform: uppercase;
     font-size: 15px;
     
+}
+.title{
+    text-transform: uppercase;
+    align-items: center;
+    margin: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 3rem;
 }

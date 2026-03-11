@@ -38,7 +38,7 @@ const [mostrarPopupError,setMostrarPopupError]=useState(false)
 })
     const [loading,setLoading]=useState(true)  
     const [mostrarForm,setMostrarForm]=useState(false)
-  
+    const [saldo,setSaldo]=useState("")
     async function carregarEmprestimos(){
         const res= await fetch("api/emprestimo")
         const data= await res.json()
@@ -50,6 +50,7 @@ const [mostrarPopupError,setMostrarPopupError]=useState(false)
 
     useEffect(()=>{
         carregarEmprestimos()
+        carregarSaldo()
     },[])
   
 const valorNumero = Number(emprestimoNovo.valor)
@@ -61,6 +62,11 @@ const { valorTotal, valorParcelas } = calculos(
   taxaNumero,
   parcelasNumero
 )
+async function carregarSaldo(){
+  const res= await fetch("/api/user/saldo")
+  const data=await res.json()
+  setSaldo(data.saldo)
+}
 async function solicitarEmprestimo() {
 const novoEmprestimo={
   nome:emprestimoNovo.nome,
@@ -77,6 +83,7 @@ const novoEmprestimo={
     await carregarEmprestimos()
     setMostrarForm(false)
     setMostrarPopup(true)
+    carregarSaldo()
     setEmprestimoNovo({
       nome: "",
       valor: "",
@@ -97,6 +104,12 @@ const novoEmprestimo={
         <div className={Styles.title}>
 <h1>empréstimo</h1>
         </div>
+        <p>
+Saldo: {Number(saldo).toLocaleString("pt-BR",{
+  style:"currency",
+  currency:"BRL"
+})}
+</p>
         <div className={Styles.card}>
             {loading && <p>Carregando . . .</p>}
             {emprestimos.map((e)=>
@@ -140,7 +153,8 @@ const novoEmprestimo={
     e.preventDefault()
     solicitarEmprestimo()
   }}>
-    <div>
+    <div className={Styles.formu}>
+      <div className={Styles.campo}>
         <label>Nome</label>
         <input type="text" value={emprestimoNovo.nome} onChange={(e)=>setEmprestimoNovo({
           ...emprestimoNovo,nome:e.target.value
@@ -179,8 +193,9 @@ const novoEmprestimo={
   currency:"BRL"
 })}</label>
 
-<p></p>
+
 <button className={Styles.btn}>Solicitar</button>
+</div>
  </div>
 
   </form>
@@ -199,10 +214,12 @@ const novoEmprestimo={
           <p>Limite Maximo de Emprestimo atingido</p>
           <button onClick={() => setMostrarPopupError(false)}>Fechar</button>
         </div>
+        
         </div>
        
       )}
         </div>
+        
 
         
         )

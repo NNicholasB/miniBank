@@ -17,7 +17,7 @@ export default function Page(){
     const [loading,setLoading]=useState(true)
     const [emprestimos,setEmprestimos]=useState<Emprestimo[]>([])
     const [selecionado,setSelecionado]=useState<Emprestimo|null>(null)
-
+    const [saldo,setSaldo]=useState("")
 
     async function carregarEmprest() {
         const res=await fetch("api/emprestimo")
@@ -32,8 +32,13 @@ export default function Page(){
     }
     useEffect(()=>{
         carregarEmprest()
+        carregarSaldo()
     },[])
-
+    async function carregarSaldo(){
+        const res=await fetch("/api/user/saldo")
+        const data= await res.json()
+        setSaldo(data.saldo)
+    }
     async function pagarParcela(){
         if(!selecionado) return      
         const res= await fetch("api/pagarParcela",{
@@ -46,7 +51,9 @@ export default function Page(){
         const data= await res.json()
         console.log(data)
         carregarEmprest()
+        carregarSaldo()
         setSelecionado(null)
+
     }
     async function pagarTotal(){
         if(!selecionado) return
@@ -60,13 +67,21 @@ export default function Page(){
         const data= await res.json()
         console.log(data)
         carregarEmprest()
+        carregarSaldo()
         setSelecionado(null)
     }
     return(
         <div>
-            <div>
+            <div className={Styles.title}>
 <h1>Pagamentos</h1>
+<p>Emprestimos  disponiveis para pagamento total ou de uma parcela</p>
             </div>
+            <p>
+Saldo: {Number(saldo).toLocaleString("pt-BR",{
+  style:"currency",
+  currency:"BRL"
+})}
+</p>
 <div className={Styles.back}>
     {loading && <p>Carregando . . .</p>}
     {emprestimos.map((e)=>
@@ -98,6 +113,11 @@ export default function Page(){
               <button onClick={()=>setSelecionado(null)} className={Styles.x}>X</button>
 
             <div>{selecionado.nome}</div>
+                         <p>Saldo: {Number(saldo).toLocaleString("pt-BR",{
+  style:"currency",
+  currency:"BRL"
+})}</p> 
+
             <p>Valor Restante:{Number(selecionado.valor_restante).toLocaleString("pt-BR",{
                 style:"currency",
                 currency:"BRL"
@@ -107,7 +127,7 @@ export default function Page(){
               currency:"BRL"
               })}</p>
               <p>Quantidade de Parcelas Restante:{selecionado.parcelas}</p>
-            
+
             <button className={Styles.btnDefault}
             onClick={pagarParcela}>Pagar Parcela</button><button className={Styles.btnDefault} onClick={pagarTotal}>Pagar Total</button>
             </div>

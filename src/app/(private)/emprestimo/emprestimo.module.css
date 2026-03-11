@@ -17,9 +17,12 @@
   padding: 15px;
   border: 1px solid #EFBF04; 
   border-radius: 8px;
-  background-color: #003366;
+  background-color: #96b9da;
   box-shadow: 0 8px 12px rgba(0, 0, 0, 0.4);
-   transition: transform 0.2s, box-shadow 0.2s
+   transition: transform 0.2s, box-shadow 0.2s;
+   color: black;
+    font-size:14px;
+  font-weight:600;
 }
 .card > div:hover {
   transform: translateY(-1px); 
@@ -94,4 +97,31 @@
 .popupError>button:hover{
   background-color: #d10f0f;
   cursor: pointer;
+}
+.formu{
+background-color: #96b9da;
+  padding:2rem;
+  border-radius:10px;
+  width:350px;
+  display:flex;
+  flex-direction:column;
+  color: black;
+  gap:1rem;
+margin: 0 auto;
+  box-shadow:0 4px 15px rgba(0,0,0,0.1);
+  border: 1px solid #EFBF04;
+}
+.campo{
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+}
+.campo label{
+  font-size:14px;
+  font-weight:600;
+}
+.campo input{
+  margin: 3px;
+  border-radius: 2px;
+  border: none;
 }
