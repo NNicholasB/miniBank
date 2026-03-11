@@ -22,6 +22,7 @@ export async function POST(req:NextRequest){
         if(quantidade>=limite){
             return NextResponse.json({error:"Limite de 3 emprestimos ativos"},{status:400})
         }
+        
         const resul= await pool.query(`
       INSERT INTO emprestimos
       (nome, usuario_id, valor, taxa_juros, parcelas, valor_restante, status, data_criado, valor_parcelas,valor_total)

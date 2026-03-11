@@ -25,6 +25,7 @@ export default function Page(){
         setEmprestimos(data)
         setLoading(false)
         
+        
     }
     function selecionarEmprestimo(e:Emprestimo){
         setSelecionado(e)
@@ -33,20 +34,40 @@ export default function Page(){
         carregarEmprest()
     },[])
 
-    function pagarParcela(){
-        if(!selecionado) return
-        setSelecionado({
-            ...selecionado, valor_restante:Number(selecionado.valor_restante) - Number(selecionado.valor_parcelas)
+    async function pagarParcela(){
+        if(!selecionado) return      
+        const res= await fetch("api/pagarParcela",{
+            method:"POST",
+            headers:{"Content-Type":"application/json"},
+            body:JSON.stringify({
+                emprestimoId:selecionado.id
+            })
         })
-        
-
+        const data= await res.json()
+        console.log(data)
+        carregarEmprest()
+        setSelecionado(null)
+    }
+    async function pagarTotal(){
+        if(!selecionado) return
+        const res= await fetch("api/pagarTotal",{
+            method:"POST",
+            headers:{"Content-Type":"application/json"},
+            body:JSON.stringify({
+                emprestimoId:selecionado.id
+            })
+        })
+        const data= await res.json()
+        console.log(data)
+        carregarEmprest()
+        setSelecionado(null)
     }
     return(
         <div>
             <div>
 <h1>Pagamentos</h1>
             </div>
-<div>
+<div className={Styles.back}>
     {loading && <p>Carregando . . .</p>}
     {emprestimos.map((e)=>
     ( <div key={e.id} onClick={()=>selecionarEmprestimo(e)}>
@@ -87,7 +108,8 @@ export default function Page(){
               })}</p>
               <p>Quantidade de Parcelas Restante:{selecionado.parcelas}</p>
             
-            <button className={Styles.btnDefault}>Pagar Parcela</button><button className={Styles.btnDefault}>Pagar Total</button>
+            <button className={Styles.btnDefault}
+            onClick={pagarParcela}>Pagar Parcela</button><button className={Styles.btnDefault} onClick={pagarTotal}>Pagar Total</button>
             </div>
     </div>
     

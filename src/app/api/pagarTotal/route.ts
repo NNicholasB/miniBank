@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req:NextRequest){
     try {
-        const userId= await getUserId
+        const userId= await getUserId()
         if(!userId){
             return NextResponse.json({error:"Nao autorizado"},{status:400})
         }
@@ -28,10 +28,10 @@ export async function POST(req:NextRequest){
             return NextResponse.json({error:"Saldo insuficiente"})
 
         }
-        await pool.query("UPDATE users SET saldo=saldo-$1 WHERE usuario_id=$2",
+        await pool.query("UPDATE users SET saldo=saldo-$1 WHERE id=$2",
             [valorEmprestimo,userId]
         )
-        await pool.query("UPDATE emprestimos SET valor_restante=valor_restante -$1,status CASE WHEN valor_restante- $1 <= 0 THEN 'inativo' ELSE status END WHERE id=$2 ",
+        await pool.query("UPDATE emprestimos SET valor_restante=valor_restante -$1,status = CASE WHEN valor_restante- $1 <= 0 THEN 'inativo' ELSE status END WHERE id=$2 ",
             [valorEmprestimo,emprestimoId]
         )
     } catch (error) {

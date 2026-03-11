@@ -26,12 +26,23 @@ export async function POST(req:NextRequest){
         if(saldo<parcela){
             return NextResponse.json({error:"Saldo insuficente"})
         }
-        await pool.query(" UPDATE users SET saldo=saldo-$1 WHERE usuario_id=$2",
+        await pool.query(" UPDATE users SET saldo=saldo-$1 WHERE id=$2",
         [parcela,userId])
 
-        await pool.query("UPDATE emprestimos SET valor_restante= valor_restante -$1, status= CASE WHEN valor_Restante -$1<= 0 THEN 'inativo' ELSE status end WHERE id=$2",[
-            parcela,emprestimoId
-        ])
+      await pool.query(`
+UPDATE emprestimos 
+SET 
+valor_restante = valor_restante - $1,
+parcelas = parcelas - 1,
+status = CASE 
+    WHEN valor_restante - $1 <= 0 THEN 'inativo'
+    ELSE status
+END
+WHERE id = $2
+`,[
+parcela,
+emprestimoId
+])
         return NextResponse.json({message:"Parcela paga com sucesso"})
     } catch (error) {
         console.log(error)

@@ -46,3 +46,29 @@ cursor: pointer;
     background-color: rgb(221, 218, 218);
     cursor: pointer;
 }
+.back{
+display: flex;
+  flex-direction: row;
+  gap: 15px; 
+  padding: 20px;
+    gap: 10px;
+    margin: 2rem;
+  
+}
+.back div{
+      padding: 15px;
+  border: 1px solid #EFBF04; 
+  border-radius: 8px;
+  background-color: #003366;
+  box-shadow: 0 8px 12px rgba(0, 0, 0, 0.4);
+   transition: transform 0.2s, box-shadow 0.2s
+}
+.back > div:hover {
+  transform: translateY(-1px); 
+  box-shadow: 0 8px 12px rgba(0, 0, 0, 0.5);
+}
+.back p{
+    text-transform: uppercase;
+    font-size: 15px;
+    
+}
