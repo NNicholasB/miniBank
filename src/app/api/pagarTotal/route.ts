@@ -31,6 +31,7 @@ export async function POST(req:NextRequest){
         await pool.query("UPDATE users SET saldo=saldo-$1 WHERE id=$2",
             [valorEmprestimo,userId]
         )
+        await pool.query("INSERT INTO pagamentos (emprestimo_id,usuario_id,valor_pago)VALUES ($1,$2,$3)",[emprestimoId,userId,valorEmprestimo])
         await pool.query("UPDATE emprestimos SET valor_restante=valor_restante -$1,status = CASE WHEN valor_restante- $1 <= 0 THEN 'inativo' ELSE status END WHERE id=$2 ",
             [valorEmprestimo,emprestimoId]
         )
