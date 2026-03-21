@@ -3,11 +3,13 @@ import { NextResponse } from "next/server"
 
 export async function GET() {
     try {
-        const res= await pool.query("SELECT DATE_TRUNC('month',data_pagamento) as mes, COUNT (*) AS total FROM pagamentos GROUP BY mes ORDER BY mes")
+        const res = await pool.query("SELECT DATE_TRUNC('month',data_pagamento) as mes, COUNT (*) AS total FROM pagamentos GROUP BY mes ORDER BY mes")
+        console.log(res)
+
         return NextResponse.json(res.rows)
     } catch (error) {
         console.log(error)
-        return NextResponse.json({error:"Erro ao buscar dados"},{status:500})
+        return NextResponse.json({ error: "Erro ao buscar dados" }, { status: 500 })
     }
-    
+
 }

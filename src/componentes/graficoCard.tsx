@@ -29,14 +29,14 @@ gap:"20px",
 height:"200px"
 }}>
         {dados.map((d,i)=>{
-            const altura = (d.total/max)*150
-            const cor = d.total % 2 === 0 ? "blue" : "red"
+            const altura = (d.total/max)*50
+            const cor = d.total>2 ? "#ac0707" : "#64a77a"
             return(            
-
+               
                 <div key={i}className="Barra">
-
+                    
                 <div style={{height:`${altura}px`,background:cor,width:10}}/>
-                  
+                  <p>{d.total}</p>
                 <p>{d.mes}</p>
                 </div>
                 
