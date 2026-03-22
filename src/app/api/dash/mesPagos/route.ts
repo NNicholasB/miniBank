@@ -4,8 +4,6 @@ import { NextResponse } from "next/server"
 export async function GET() {
     try {
         const res = await pool.query("SELECT DATE_TRUNC('month',data_pagamento) as mes, COUNT (*) AS total FROM pagamentos GROUP BY mes ORDER BY mes")
-        console.log(res)
-
         return NextResponse.json(res.rows)
     } catch (error) {
         console.log(error)

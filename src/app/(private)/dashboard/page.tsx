@@ -1,5 +1,6 @@
 'use client'
 
+import GraficoCirculo from "@/componentes/graficoCirculo";
 import GraficoCard from "../../../componentes/graficoCard";
 
 
@@ -21,14 +22,14 @@ export default function Page(){
         <div>
 <h1>Dash</h1>
 <div>
-<p>
+<p style={{paddingTop:"50px"}}>
     Quantidade de Parcelas Pagas Por Mes
 </p>
 
 </div>
 
 <GraficoCard/>
-
+<GraficoCirculo/>
         </div>
         
     )

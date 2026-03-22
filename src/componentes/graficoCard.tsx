@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-
+import styles from "./graficoCard.module.css"
 interface item{
     emprestimo:string,
     mes:string,
@@ -22,20 +22,15 @@ useEffect(()=>{
 
 const max=Math.max(...dados.map(d=>d.total),1)
 return(
-    <div style={{
-display:"flex",
-alignItems:"flex-end",
-gap:"20px",
-height:"200px"
-}}>
+    <div className={styles.container}>
         {dados.map((d,i)=>{
             const altura = (d.total/max)*50
-            const cor = d.total>2 ? "#ac0707" : "#64a77a"
+            const cor = d.total>=3 ? "#68e71f" : "#cc0e0e"
             return(            
                
-                <div key={i}className="Barra">
+                <div key={i}>
                     
-                <div style={{height:`${altura}px`,background:cor,width:10}}/>
+                <div className={styles.barra} style={{height:`${altura}px`,background:cor,width:10}}/>
                   <p>{d.total}</p>
                 <p>{d.mes}</p>
                 </div>

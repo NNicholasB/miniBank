@@ -1,10 +1,12 @@
+'use client'
+import React from "react";
 import { useEffect, useState } from "react";
-
+import styles from "./graficoCirculo.module.css"
 
 interface Dados{
 pago:number,
-valor_restante:number,
 valor:number,
+valor_solicitado:number,
 valor_total:number,
 valor_parcelas:number
 status:string,
@@ -15,18 +17,49 @@ mes:string
 export default function GraficoCirculo(){
     const [dados,setDados]=useState<Dados[]>([])
 
+
     useEffect(()=>{
         fetch("/api/dash/pagosTotal").then(res=>res.json()).then((data:Dados[])=>{
-            const totalPago =data.reduce((acc,i)=>acc+i.pago,0)
-            const totalRestante=data.reduce((acc,i)=>acc+i.valor_restante,0)
-            const valorSolicitado=data.reduce((acc,i)=>acc+i.valor,0)
-            const valorParcelas=data.reduce((acc,i)=>acc+i.valor_parcelas,0)
-        })
+            setDados(data)
+            
+        }
+         )
     },[])
 
 return (
-    <div>
+    
+       <div className={styles.container}>
+        {dados.map((e,i)=>{ 
+            const pago = Number(e.pago)
+const restante = Number(e.valor)
 
-    </div>
+            const total=pago+restante
+            if(total <= 0) return null
+            const pP=(pago/total)*100
+            const pR=(restante/total)*100
+          
+           const style:React.CSSProperties =
+e.status === "inativo"
+? { background:"#9ca3af" } 
+: {
+  background:`conic-gradient(
+    #68e71f 0% ${pP}%,
+    #cc0e0e ${pP}% ${pP+pR}%,
+    #06a3ca ${pP+pR}% 100%
+  )`
+}
+            return (
+                <div key={i} className={styles.card}>
+                    <div  title={`Pago:${pago}|Restante:${restante}`}  className={styles.pizza} style={style}/>
+                    <p>{e.nome}</p>
+                    <p>Status:{e.status}</p>
+                    <p>R${e.valor}</p>
+                </div>
+            )
+        })}
+       </div>
+       
+
+    
 )
 }
